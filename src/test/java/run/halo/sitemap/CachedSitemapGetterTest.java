@@ -18,19 +18,28 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
+import run.halo.app.plugin.extensionpoint.ExtensionGetter;
 
 @ExtendWith(MockitoExtension.class)
 public class CachedSitemapGetterTest {
+    // fork（2026-11-16）起 CachedSitemapGetter 走扩展点取条目来源，不再是直接注入具体类，
+    // 所以这里改成桩一个 ExtensionGetter，让它返回本插件自己的 DefaultSitemapEntryLister。
+    @Mock
+    private ExtensionGetter extensionGetter;
+
     @Mock
     private DefaultSitemapEntryLister lister;
+
     private CachedSitemapGetter getter;
     private SitemapGeneratorOptions options;
 
     @BeforeEach
     void setUp() throws MalformedURLException {
+        when(extensionGetter.getExtensions(SitemapEntryLister.class))
+            .thenReturn(Flux.just(lister));
         when(lister.list(any())).thenReturn(
             Flux.just(SitemapEntry.builder().loc("http://localhost:8090/about").build()));
-        getter = new CachedSitemapGetter(lister);
+        getter = new CachedSitemapGetter(extensionGetter);
         options = SitemapGeneratorOptions.builder()
             .siteUrl(new URL("http://localhost:8090"))
             .build();

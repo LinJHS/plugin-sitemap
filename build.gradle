@@ -2,6 +2,7 @@ plugins {
     id "io.freefair.lombok" version "9.1.0"
     id "run.halo.plugin.devtools" version "0.6.2"
     id 'java'
+    id 'maven-publish'
 }
 
 group 'run.halo.sitemap'
@@ -11,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation platform('run.halo.tools.platform:plugin:2.22.5')
+    implementation platform('run.halo.tools.platform:plugin:2.27.1')
     compileOnly 'run.halo.app:api'
 
     testImplementation 'run.halo.app:api'
@@ -32,4 +33,23 @@ java {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
     options.release = 21
+}
+
+halo {
+    version = '2.27.1'
+}
+
+/*
+ * fork 追加（2026-11-16）：把插件 jar 发布到本地 Maven 仓库，
+ * 别的插件（plugin-toolbox）才能 compileOnly 到 SitemapEntryLister 这个扩展点接口 ——
+ * Halo 里插件各有自己的类加载器，编译期必须有一份接口类。
+ * 上游规范做法是像 plugin-mcp-server 那样拆出独立 api 模块，这里先用最小改动满足自用。
+ */
+publishing {
+    publications {
+        plugin(MavenPublication) {
+            from components.java
+            artifactId = 'plugin-sitemap'
+        }
+    }
 }
