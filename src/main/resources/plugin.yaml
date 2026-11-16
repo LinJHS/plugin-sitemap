@@ -13,9 +13,9 @@ spec:
     name: Halo
     website: https://github.com/halo-dev
   logo: logo.svg
-  repo: https://github.com/halo-dev/plugin-sitemap
-  issues: https://github.com/halo-dev/plugin-sitemap/issues
-  homepage: https://www.halo.run/store/apps/app-QDFMI
+  repo: https://github.com/LinJHS/plugin-sitemap
+  issues: https://github.com/LinJHS/plugin-sitemap/issues
+  homepage: https://github.com/LinJHS/plugin-sitemap
   displayName: "Sitemap"
   description: "为站点生成站点地图"
   settingName: sitemap-settings
